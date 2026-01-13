@@ -64,7 +64,42 @@ def group1_masks(df: pd.DataFrame):
 
     return masks      
 
-PROJECT_ROOT = Path.cwd().resolve().parents[0]   # notebooks/ -> project root
+from pathlib import Path
+
+## Processed data created by using the masks
+
+RAW_G1 = Path("../data_raw/group1")
+OUT_G1_TRADE = Path("../data_processed/group1/trade")
+g1_files = sorted(RAW_G1.glob("*.parquet"))
+g1_log = []
+
+for p in g1_files:
+    df = load_data(str(p))
+    m = group1_masks(df)
+
+    df_trade = df[m["in_session"] & (~m["no_trade"])].copy()
+    m_trade = group1_masks(df_trade)
+    df_calc = df_trade[(~m_trade["drop_calc"])].copy()
+
+    df_trade.to_parquet(OUT_G1_TRADE / p.name)
+    df_calc.to_parquet(OUT_G1_CALC / p.name)
+
+    g1_log.append((p.name, df.shape[0], df_trade.shape[0], df_calc.shape[0]))
+
+print("Saved G1 trade+calc for files:", len(g1_log))
+g1_log[:3]
+
+def find_project_root(start: Path) -> Path:
+    cur = start.resolve()
+    for _ in range(10):
+        if (cur / "_quarto.yml").exists(): 
+            return cur
+        cur = cur.parent
+    raise RuntimeError("Project root not found (missing _quarto.yml).")
+
+START = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+PROJECT_ROOT = find_project_root(START)
+
 G1_TRADE_DIR = PROJECT_ROOT / "data_processed" / "group1" / "trade"
 
 files = sorted(G1_TRADE_DIR.glob("*.parquet"))

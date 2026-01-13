@@ -1,0 +1,17 @@
+{
+  "HFD Project.qmd": {
+    "HFD Project.html": "01119070"
+  },
+  "notebooks/01_infrastructure.ipynb": {
+    "01_infrastructure.html": "caaedd15"
+  },
+  "notebooks/02_g1_s1_presentation.ipynb": {
+    "02_g1_s1_presentation.html": "c44d7760"
+  },
+  "notebooks/02_g1_s1_trend_sp_trend_following.ipynb": {
+    "02_g1_s1_trend_sp_trend_following.html": "f368797d"
+  },
+  "notebooks/03_g1_s2_bollinger_mean_reversion.ipynb": {
+    "03_g1_s2_bollinger_mean_reversion.html": "92c5acf0"
+  }
+}

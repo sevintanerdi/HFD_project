@@ -53,3 +53,11 @@ execute:
 - Entry / exit multipliers: *k_enter = 10, **k_exit = 5*
 - Point value: *50 USD / point*
 - Transaction cost: *12 USD per trade*
+
+```{python}
+#|echo: false
+#| output: false
+import runpy
+
+runpy.run_path("group1_final_strategy.py")
+```
