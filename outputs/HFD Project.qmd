@@ -9,6 +9,9 @@ format:
     width: 1280
     height: 720
     css: styles.css
+    resources: 
+        - "*.png"
+        - "**/*.png"
 execute:
   echo: true
   warning: false
