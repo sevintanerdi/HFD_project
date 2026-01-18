@@ -381,3 +381,33 @@ plt.grid(axis='x')
 plt.savefig(f"pnl.png", dpi = 300, bbox_inches = "tight")
 perf_df
 
+from pathlib import Path
+import matplotlib.pyplot as plt
+
+OUTDIR = Path(r"C:\Users\LO79RS\HFD_Project\outputs") 
+OUTDIR.mkdir(parents=True, exist_ok=True)
+print("OUTDIR =", OUTDIR.resolve())
+
+for label, d in outs.items():
+    fname = OUTDIR / f"equity_{label}.png"
+    print("saving ->", fname)
+
+    eg = g.cumsum()
+    en = n.cumsum()
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(eg.index, eg.values, label="Gross PnL")
+    plt.plot(en.index, en.values, label="Net PnL")
+    plt.title(f"SP EMA(20)-EMA(240) - {label}")
+    plt.xlabel("Date")
+    plt.ylabel("Cumulative PnL (USD)")
+    plt.legend()
+    plt.tight_layout()
+
+    fname = OUTDIR / f"equity_{label}.png"
+    plt.savefig(fname, dpi=300)
+    plt.close()
+
+
+    print("  exists?", fname.exists(), " size=", fname.stat().st_size if fname.exists() else None)
+
