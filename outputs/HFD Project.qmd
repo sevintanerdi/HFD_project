@@ -172,3 +172,186 @@ styled_table
 -   Deterioration in non-trending regimes highlights **volatility-adjusted trend dependence**
 
 **Key takeaway:** Performance is driven by regime-dependent trend persistence, not constant market exposure.
+
+------------------------------------------------------------------------
+
+## Group 2 | Strategy selection
+
+- *Goal:* make profit from intraday XAU price movements while keeping transaction costs under control
+- *Candidates tested:*
+  - Momentum (EMA10–60, EMA20–100)
+  - Mean reversion
+- *Key observation:*
+  - Mean-reversion strategies generated **high turnover**
+  - Transaction costs **eroded net PnL** despite positive gross returns
+- *Final choice:* *Momentum strategy using EMA(20)–EMA(100)*
+  - lower trading frequency & more stable net performance across quarters
+
+------------------------------------------------------------------------
+
+## Key design principle
+
+- Strategy is **pure momentum-based**, relying on EMA(20)–EMA(100) trend signals
+- Positions are **long or short when the EMA signal is defined**
+- Trading is **explicitly disabled during intraday break periods (16:50–18:10)**
+- Strategy selection prioritizes **robust net performance after transaction costs**
+- Compared to mean-reversion alternatives, the momentum strategy:
+  - trades less frequently
+  - delivers more stable net PnL across quarters
+
+------------------------------------------------------------------------
+
+## Key design idea
+
+- The strategy follows **price trends**, not short-term noise
+- Positions are determined only by the **relative position of two EMAs**
+- The strategy is **long or short when the signal is defined and trading is allowed**
+- Trading is **turned off during the intraday break (16:50–18:10)**
+- Strategy selection is based on **net performance after costs**, not gross profits
+- Compared to mean-reversion strategies, the final strategy:
+  - trades less & is more resistant to transaction costs
+  - performs more consistently over time
+
+------------------------------------------------------------------------
+
+## How the strategy works
+
+- *Signal:*
+  - if EMA(20) is above EMA(100) → **go long**
+  - if EMA(20) is below EMA(100) → **go short**
+
+- *Execution:*
+  - signals use **past prices only**
+  - positions are set to zero during the daily break period
+
+- *Profit and loss:*
+  - profits come from intraday price changes
+  - transaction costs are subtracted for each trade
+  - intraday results are **summed to daily PnL**
+
+------------------------------------------------------------------------
+
+## Parameters
+
+- Asset traded: *XAU*
+- Fast EMA: *20*
+- Slow EMA: *100*
+- Point value: *100 USD per point*
+- Transaction cost: *15 USD per trade*
+- Data frequency: *intraday data aggregated to daily PnL*
+
+```{python}
+#| echo: false
+#| results: hide
+#| eval: false
+import runpy
+runpy.run_path("final_strategy_group2.py")
+```
+
+------------------------------------------------------------------------
+
+## Results {.smaller}
+
+::: {.columns}
+::: {.column width="70%"}
+
+![](summary_stats_group2.png){width="80%"}  
+*Performance varies by quarter; profits come from strong trends. Net PnL closely tracks gross PnL.*
+
+![](aggregated_cumulative_pnl.png){width="100%"}
+
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Results per quarter (1/2) {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+
+![](XAU_EMA20_100_2023_Q1.png){width="100%"}  
+*2023 Q1: No persistent trend → losses.*
+
+![](XAU_EMA20_100_2023_Q3.png){width="100%"}  
+*2023 Q3: Highly choppy; drawdown.*
+
+:::
+
+::: {.column width="50%"}
+
+![](XAU_EMA20_100_2023_Q4.png){width="100%"}  
+*2023 Q4: Sustained trend; recovery.*
+
+![](XAU_EMA20_100_2024_Q2.png){width="100%"}  
+*2024 Q2: Trend emerges; positive.*
+
+:::
+:::::
+
+------------------------------------------------------------------------
+
+## Results per quarter (2/2) {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+
+![](XAU_EMA20_100_2024_Q4.png){width="100%"}  
+*2024 Q4: Mid-quarter trend.*
+
+![](XAU_EMA20_100_2025_Q1.png){width="100%"}  
+*2025 Q1: No persistent trend.*
+
+:::
+
+::: {.column width="50%"}
+
+![](XAU_EMA20_100_2025_Q2.png){width="100%"}  
+*2025 Q2: Strong trend; large gains.*
+
+:::
+:::::
+
+------------------------------------------------------------------------
+
+## Performance Metrics {.smaller}
+
+- **Overall performance**
+  - **Positive cumulative net PnL**
+  - Net ≈ gross PnL → **costs (15 USD/trade) not dominant**
+
+- **Strategy behaviour**
+  - Profits only in **strong intraday trends**
+  - Winning: **2023 Q4, 2025 Q2**
+  - Losing: **2023 Q1, Q3, 2025 Q1**
+  - Trade count **stable** → regime-driven performance
+
+- **Risk-adjusted performance**
+  - **Sharpe & Calmar > 0** in trending quarters
+  - Deteriorates in sideways regimes
+
+- **Key takeaway**
+  - Strategy is **highly regime-dependent**
+
+
+------------------------------------------------------------------------
+
+## Summary and conclusions {.smaller}
+
+- **Scope**
+  - Two trend-following strategies on intraday data
+  - Transaction costs explicitly considered
+
+- **Group 1: Volatility-filtered EMA**
+  - Robust in persistent trends
+  - Fewer trades, limited costs
+  - Stable in trends; drawdowns sideways
+
+- **Group 2: EMA(20)–EMA(100)**
+  - Profitable only in strong trends
+  - Losses in choppy markets
+  - Profits driven by few strong quarters
+
+- **Conclusion**
+  - Trend-following is **regime-dependent**
+  - Volatility filtering improves robustness
