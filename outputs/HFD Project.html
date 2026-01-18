@@ -29,7 +29,8 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="HFD Project_files/libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
+  <link rel="stylesheet" href="HFD Project_files/libs/revealjs/dist/theme/quarto-0fde88a82f0356838740f155f1088782.css">
+  <link rel="stylesheet" href="styles.css">
   <link href="HFD Project_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="HFD Project_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="HFD Project_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -138,8 +139,8 @@ Team 6: Sevin Tan Erdi (474531), Thuan Tran (476708)
 </div>
 
 </section>
-<section id="strategy-selection" class="slide level2">
-<h2>Strategy selection</h2>
+<section id="group-1-strategy-selection" class="slide level2">
+<h2>Group 1 | Strategy selection</h2>
 <ul>
 <li><em>Goal:</em> robust intraday trend capture with <em>controlled turnover</em></li>
 <li><em>Candidates tested:</em>
@@ -202,41 +203,61 @@ Team 6: Sevin Tan Erdi (474531), Thuan Tran (476708)
 </section>
 <section id="results" class="slide level2">
 <h2>Results</h2>
-<div id="fe0d8f55" class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-<figure>
-<p><img data-src="HFD%20Project_files/figure-revealjs/cell-3-output-1.png"></p>
-</figure>
-</div>
-</div>
-</div>
-<div id="f2feeb00" class="cell" data-execution_count="3">
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div>
-<figure>
-<p><img data-src="HFD%20Project_files/figure-revealjs/cell-4-output-1.png"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="results-per-quarter" class="slide level2">
-<h2>Results per quarter</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p><img data-src="equity_2023_Q1.png"> <img data-src="equity_2023_Q3.png"> <img data-src="equity_2023_Q4.png"></p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="equity_2024_Q2.png"> <img data-src="equity_2024_Q4.png"> <img data-src="equity_2025_Q1.png"> <img data-src="equity_2025_Q2.png"></p>
+<div class="column" style="width:70%;">
+<p><img data-src="summary_stats_g1.png" style="width:80.0%"> <img data-src="pnl.png" style="width:100.0%"></p>
 </div></div>
 </section>
-<section id="performance-metrics" class="slide level2">
+<section id="results-per-quarter-12" class="slide level2">
+<h2>Results per quarter (1/2)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="equity_2023_Q1.png" style="width:100.0%"> <img data-src="equity_2023_Q3.png" style="width:100.0%"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="equity_2023_Q4.png" style="width:100.0%"> <img data-src="equity_2024_Q2.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="results-per-quarter-22" class="slide level2">
+<h2>Results per quarter (2/2)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="equity_2024_Q4.png" style="width:100.0%"> <img data-src="equity_2025_Q1.png" style="width:100.0%"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="equity_2025_Q2.png" style="width:100.0%"></p>
+</div><div style="
+  position: absolute;
+  top: 70%;
+  right: 5%;
+  width: 40%;
+  font-size: 0.6em;
+">
+<p><em>Trend-following performance is highly regime-dependent, with convex payoffs during persistent trends and drawdowns during sideways markets.</em></p>
+</div>
+</div>
+</section>
+<section id="performance-metrics" class="slide level2 smaller">
 <h2>Performance Metrics</h2>
-<p>The strategy delivers positive cumulative performance overall, with net PnL closely tracking gross PnL, indicating that transaction costs are meaningful but not performance-destroying.</p>
-<p>Performance is highly regime-dependent: strong results are observed in 2023 Q1, 2024 Q2, and 2025 Q2, while sideways or choppy market conditions (e.g.&nbsp;2023 Q3, 2024 Q4, 2025 Q1) lead to drawdowns.</p>
-<p>• The equity curve confirms that gains are generated primarily during persistent trend periods, consistent with the EMA(20)–EMA(240) trend-following design.</p>
-<p>• Average daily number of trades remains low (≈ 1 trade/day), validating the design choice to avoid overtrading and reduce transaction cost impact.</p>
-<p>• Sharpe and Calmar ratios are positive in profitable quarters but deteriorate during non-trending regimes, highlighting the strategy’s dependence on volatility-adjusted trend strength.</p>
+<p><strong>Overall performance</strong></p>
+<ul>
+<li>Strategy delivers <strong>positive cumulative PnL</strong>, with <strong>net PnL closely tracking gross PnL</strong></li>
+<li>Transaction costs are <strong>material but not performance-destroying</strong></li>
+</ul>
+<p><strong>Strategy behavior</strong></p>
+<ul>
+<li>Gains are generated <strong>primarily during persistent trends</strong>, consistent with the <strong>EMA(20)–EMA(240) trend-following design</strong></li>
+<li><strong>Low trading frequency</strong> (≈ 1 trade/day) limits overtrading and cost drag</li>
+</ul>
+<p><strong>Regime dependence</strong></p>
+<ul>
+<li>Strong performance in trending regimes: 2023 Q1, 2024 Q2, 2025 Q2</li>
+<li>Drawdowns in sideways / choppy markets: 2023 Q3, 2024 Q2, 2025 Q2</li>
+</ul>
+<p><strong>Risk-adjusted performance</strong></p>
+<ul>
+<li><strong>Sharpe and Calmar ratios positive in profitable quarters</strong></li>
+<li>Deterioration in non-trending regimes highlights <strong>volatility-adjusted trend dependence</strong></li>
+</ul>
+<p><strong>Key takeaway:</strong> Performance is driven by regime-dependent trend persistence, not constant market exposure.</p>
 
 </section>
     </div>
@@ -420,9 +441,9 @@ Team 6: Sevin Tan Erdi (474531), Thuan Tran (476708)
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1050,
+        width: 1280,
 
-        height: 700,
+        height: 720,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,

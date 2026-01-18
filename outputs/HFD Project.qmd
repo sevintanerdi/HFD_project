@@ -4,14 +4,18 @@ author: "Team 6: Sevin Tan Erdi (474531), Thuan Tran (476708)"
 format:
   revealjs:
     slide-number: true
-    theme: default
+    theme: simple
+    center: false
+    width: 1280
+    height: 720
+    css: styles.css
 execute:
   echo: true
   warning: false
   message: false
 ---
 
-## Strategy selection
+## Group 1 | Strategy selection
 
 -   *Goal:* robust intraday trend capture with *controlled turnover*
 -   *Candidates tested:*
@@ -36,6 +40,8 @@ execute:
     -   lowers transaction costs
     -   improves net performance stability
 
+------------------------------------------------------------------------
+
 ## Signal construction
 
 -   *Trend direction:* determined by EMA(20) − EMA(240)
@@ -49,6 +55,8 @@ execute:
 
     -   signal strength is compared to recent realized volatility
     -   trades are allowed only when the signal exceeds a volatility-based threshold
+
+------------------------------------------------------------------------
 
 ## Parameters
 
@@ -68,21 +76,16 @@ import runpy
 runpy.run_path("group1_final_strategy.py")
 ```
 
+------------------------------------------------------------------------
+
 ## Results
 
-```{python}
-#| echo: false
-#| out-width: 100%
-from IPython.display import Image
-Image(filename="summary_stats_g1.png")
-```
-
-```{python}
-#| echo: false
-#| out-width: 100%
-from IPython.display import Image
-Image(filename="pnl.png")
-```
+::: {.columns}
+::: {.column width="70%"}
+![](summary_stats_g1.png){width="80%"}
+![](pnl.png){width="100%"}
+:::
+:::
 
 ```{python}
 #| echo: false
@@ -107,35 +110,62 @@ styled_table = (
 )
 styled_table
 ```
+---
+## Results per quarter (1/2)
 
-## Results per quarter
-
-::: {.columns}
-
+::::: columns
 ::: {.column width="50%"}
-![](equity_2023_Q1.png)
-![](equity_2023_Q3.png)
-![](equity_2023_Q4.png)
+![](equity_2023_Q1.png){width="100%"} ![](equity_2023_Q3.png){width="100%"}
 :::
 
 ::: {.column width="50%"}
-![](equity_2024_Q2.png)
-![](equity_2024_Q4.png)
-![](equity_2025_Q1.png)
-![](equity_2025_Q2.png)
+![](equity_2023_Q4.png){width="100%"} ![](equity_2024_Q2.png){width="100%"}
+:::
+:::::
+
+
+## Results per quarter (2/2)
+
+::::: columns
+::: {.column width="50%"}
+![](equity_2024_Q4.png){width="100%"} ![](equity_2025_Q1.png){width="100%"}
 :::
 
+::: {.column width="50%"}
+![](equity_2025_Q2.png){width="100%"}
 :::
+<div style="
+  position: absolute;
+  top: 70%;
+  right: 5%;
+  width: 40%;
+  font-size: 0.6em;
+">
+*Trend-following performance is highly regime-dependent, with convex payoffs during persistent trends and drawdowns during sideways markets.*
+</div>
+:::::
+------------------------------------------------------------------------
 
+## Performance Metrics {.smaller}
 
-## Performance Metrics
+**Overall performance**
 
-The strategy delivers positive cumulative performance overall, with net PnL closely tracking gross PnL, indicating that transaction costs are meaningful but not performance-destroying.
+-   Strategy delivers **positive cumulative PnL**, with **net PnL closely tracking gross PnL**
+-   Transaction costs are **material but not performance-destroying**
 
-Performance is highly regime-dependent: strong results are observed in 2023 Q1, 2024 Q2, and 2025 Q2, while sideways or choppy market conditions (e.g. 2023 Q3, 2024 Q4, 2025 Q1) lead to drawdowns.
+**Strategy behavior**
 
-• The equity curve confirms that gains are generated primarily during persistent trend periods, consistent with the EMA(20)–EMA(240) trend-following design.
+-   Gains are generated **primarily during persistent trends**, consistent with the **EMA(20)–EMA(240) trend-following design**
+-   **Low trading frequency** (≈ 1 trade/day) limits overtrading and cost drag
 
-• Average daily number of trades remains low (≈ 1 trade/day), validating the design choice to avoid overtrading and reduce transaction cost impact.
+**Regime dependence**
 
-• Sharpe and Calmar ratios are positive in profitable quarters but deteriorate during non-trending regimes, highlighting the strategy’s dependence on volatility-adjusted trend strength.
+-  Strong performance in trending regimes: 2023 Q1, 2024 Q2, 2025 Q2
+-  Drawdowns in sideways / choppy markets: 2023 Q3, 2024 Q2, 2025 Q2
+
+**Risk-adjusted performance**
+
+-   **Sharpe and Calmar ratios positive in profitable quarters**
+-   Deterioration in non-trending regimes highlights **volatility-adjusted trend dependence**
+
+**Key takeaway:** Performance is driven by regime-dependent trend persistence, not constant market exposure.

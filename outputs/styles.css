@@ -1,0 +1,17 @@
+.reveal section.smaller {
+  font-size: 0.75em;
+  line-height: 1.2;
+}
+
+
+.reveal section.smaller p,
+.reveal section.smaller li {
+  font-size: 0.75em;
+  line-height: 1.2;
+}
+
+/* Prevent nested lists from shrinking (Reveal default behavior) */
+.reveal .slides section .smaller ul ul,
+.reveal .slides section .smaller ul ul ul {
+  font-size: 1em !important;
+}
