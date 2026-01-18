@@ -1,6 +1,6 @@
 ---
 title: "Quantitative Strategies on High Frequency Data Project"
-author: "Team: Sevin Tan Erdi, Thuan Tran"
+author: "Team 6: Sevin Tan Erdi, Thuan Tran"
 format:
   revealjs:
     slide-number: true
