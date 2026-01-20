@@ -18,7 +18,7 @@ execute:
   message: false
 ---
 
-## Group 1 | Strategy selection
+## Group 1 | Strategy selection for S&P
 
 -   *Goal:* robust intraday trend capture with *controlled turnover*
 -   *Candidates tested:*
