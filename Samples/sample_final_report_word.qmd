@@ -1,0 +1,205 @@
+---
+title: "Quantitative strategies on High Frequency Data"
+subtitle: "submission of research project -- SAMPLE PRESENTATION"
+author: "Team members: Author nr 1 and Author nr 2"
+date: 01/20/2026
+date-format: "MMM D, YYYY"
+format: docx
+---
+
+## Approaches undertaken
+
+This part should describe **in short** what particular methods you used, all entry/exit techniques considered, all additional assumptions.
+
+For **each group of assets separately** You should also explain **WHAT different parameters** you considered (e.g. memories of moving averages, types of moving averages, types of volatility measures, memory of volatility measures, types of additional indicators, memories of additional indicators, etc.), what (if any) additional filtering rules you applied.
+
+You should also explain with details **HOW** you searched for the best combination of parameters for a particular group of assets.
+
+
+## Finally selected strategy for **group 1**
+
+Provide a **general summary** (approach and a set of **final parameters**) for assets from **group 1**.
+(e.g. momentum strategy, cross over of two exponential moving averages EMA10 and EMA60).
+
+
+<!-- here you can include code chunk that applies the strategy for group 1 and calculates all the summary statistics
+-->
+
+```{python}
+#|echo: false
+#| output: false
+import runpy
+
+# REMEMBER that in the final report you should 
+# summarise ALL teh QUARTERS - also the OUT-OF-SAMPLE
+
+runpy.run_path("your_final_strategy_group1.py")
+```
+
+
+
+## Summary of results for **group 1**
+
+```{python}
+#| echo: false
+
+# import the csv file with strategy results
+import pandas as pd
+summary_data1_all_quarters = pd.read_csv("summary_data1_all_quarters.csv")
+
+# Format the table
+numeric_cols = summary_data1_all_quarters.select_dtypes(include=['float', 'int']).columns
+
+styled_table = (
+    summary_data1_all_quarters.style
+    .format("{:.2f}", subset=numeric_cols)   # format numbers only
+    .set_properties(**{"text-align": "right"})  
+    .set_table_styles([
+        {"selector": "th", "props": [("font-size", "10px")]},
+        {"selector": "td", "props": [("font-size", "10px")]}
+    ])
+    .hide(axis = "index")   # << hides the index
+)
+styled_table
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2023Q1
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2023_Q1.png")
+```
+
+## Equity line for **group 1** -- 2023Q2
+
+```{python}
+#| echo: false
+#| out-width: 100%
+#from IPython.display import Image
+#Image(filename="data1_2023_Q2.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2023Q3
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2023_Q3.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2023Q4
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2023_Q4.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2024Q1
+
+```{python}
+#| echo: false
+#| out-width: 100%
+# from IPython.display import Image
+# Image(filename="data1_2024_Q1.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2024Q2
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2024_Q2.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2024Q3
+
+```{python}
+#| echo: false
+#| out-width: 100%
+# from IPython.display import Image
+# Image(filename="data1_2024_Q3.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2024Q4
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2024_Q4.png")
+```
+your comments required !!!
+
+## Equity line for **group 1** -- 2025Q1
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2025_Q1.png")
+```
+your comments required !!!
+
+## Equity line for **group 1** -- 2025Q2
+
+```{python}
+#| echo: false
+#| out-width: 100%
+from IPython.display import Image
+Image(filename="data1_2025_Q2.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2025Q3
+
+```{python}
+#| echo: false
+#| out-width: 100%
+# from IPython.display import Image
+# Image(filename="data1_2025_Q3.png")
+```
+
+your comments required !!!
+
+## Equity line for **group 1** -- 2025Q4
+
+```{python}
+#| echo: false
+#| out-width: 100%
+# from IPython.display import Image
+# Image(filename="data1_2025_Q4.png")
+```
+
+your comments required !!!
+
+
+
+## Summary of results for **group 2**
+
+AND OF COURSE YOU SHOULD INCLUDE A SIMILAR SUMMARY TABLE, FIGURES AND COMMENTS FOR THE STRATEGY BASED ON **THE SECOND GROUP OF ASSETS**
+
+
+## Summary and conclusions
+
+Here you should include a summary of obtained results and some general conclusions.

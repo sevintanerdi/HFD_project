@@ -1,0 +1,232 @@
+---
+title: "Quantitative Strategies on High Frequency Data"
+subtitle: "Final Report"
+author: "Team 6: Sevin Tan Erdi (474531), Thuan Tran (476708)"
+date: 01/25/2026
+date-format: "MMM D, YYYY"
+format: docx
+---
+
+# Group 1 (S&P 500 Equity Index Futures) | Strategy Description
+
+## Asset Description
+
+The selected asset for Group 1 is the S&P 500 equity index futures contract, which provides exposure to the broad U.S. equity market.
+These properties make S&P 500 futures particularly well suited for systematic intraday trading strategies, as they reduce market microstructure noise and transaction cost distortions, allowing trend-based signals to be more reliably translated into realized performance.
+
+## Strategy Approach
+
+The final strategy follows a trend-following approach applied to intraday S&P 500 futures data. The core objective is to capture persistent intraday directional movements while avoiding excessive turnover and minimizing the impact of transaction costs.
+
+Unlike mean-reversion strategies that rely on frequent small price corrections, this approach assumes that intraday trends in equity index futures can persist over multiple hours, especially during periods of strong macroeconomic signals, institutional order flow, or directional risk sentiment.
+
+The strategy is explicitly designed not to be continuously invested in the market. Instead, positions are taken only when the strength of the detected trend is sufficiently large relative to prevailing market volatility.
+
+```{python}
+#|echo: false
+#| output: false
+#| results: hide
+#| eval: false
+import runpy
+
+runpy.run_path("group1_final_strategy.py")
+```
+
+## Strategy Type and Core Elements
+
+The strategy is implemented as an exponential moving average (EMA) crossover model enhanced with volatility-scaled entry and exit thresholds. It consists of the following key components:
+
+1.	Trend Direction Indicator
+A fast and a slow EMA are used to identify the prevailing intraday trend direction.
+	
+2.	Signal Strength Measure
+The magnitude of the EMA spread is used as a proxy for trend strength.
+
+3.	Volatility Filter and Hysteresis Mechanism
+Entry and exit decisions are conditioned on recent realized volatility to avoid reacting to noise-driven price fluctuations.
+
+This structure allows the strategy to dynamically adapt to different volatility regimes in the S&P 500 futures market.
+
+
+## Signal Construction
+
+Let $P_t$ denote the S&P 500 futures price at time $t$.
+
+Two exponential moving averages are computed:
+
+- A fast exponential moving average with a window length of 20 bars, denoted as $EMA_{fast}(t)$
+- A slow exponential moving average with a window length of 240 bars, denoted as $EMA_{slow}(t)$
+
+The raw trend signal is defined as:
+
+$$
+S_t = EMA_{fast}(t) - EMA_{slow}(t)
+$$
+
+The sign of $S_t$ determines the directional bias of the strategy:
+
+- $S_t > 0$: long bias
+- $S_t < 0$: short bias
+
+The absolute value $|S_t|$ represents the strength of the detected trend.
+
+EMA(20) and EMA(240) are chosen to separate short-term price dynamics from the dominant medium-to-long-term trend. EMA(20) reacts quickly to recent price changes, while EMA(240) provides a stable benchmark that filters out short-term noise.
+
+The 20/240 ratio (1:12) ensures sufficient temporal separation between the fast and slow signals, reducing false crossovers and aligning the strategy with medium-term trend-following behavior rather than short-term momentum
+
+## Volatility Scaling and Entry/Exit Technique
+
+
+To distinguish meaningful trends from random price fluctuations, the strategy employs volatility-adjusted thresholds.
+
+Let $\sigma_t$ denote the realized intraday volatility of the S&P 500 futures, estimated using a rolling window of 120 bars.
+
+Two volatility-scaled thresholds are defined:
+
+**Entry threshold:**
+$$
+|S_t| > k_{\text{enter}} \cdot \sigma_t
+$$
+
+**Exit threshold:**
+$$
+|S_t| < k_{\text{exit}} \cdot \sigma_t
+$$
+
+A position is opened only when the signal strength exceeds the entry threshold.
+Once a position is opened, it is closed only when the signal falls below the exit threshold.
+This asymmetric design introduces hysteresis, which prevents frequent position flipping during sideways or noisy market conditions and significantly reduces unnecessary trades.
+
+The volatility-scaled thresholds (k = 5 for exit, k = 10 for entry) are selected asymmetrically to enforce hysteresis: a higher entry threshold avoids overtrading in noisy regimes, while a lower exit threshold allows positions to persist during temporary pullbacks within a trend.
+
+The EMA window pair balances responsiveness to intraday price movements with sufficient smoothing to identify persistent trends. The volatility window provides a stable estimate of recent market conditions without reacting excessively to short-lived volatility spikes.
+
+## Parameter Values
+
+The final parameter values used in the strategy are:
+
+- Fast EMA window: 20 bars
+
+- Slow EMA window: 240 bars
+
+- Volatility estimation window: 120 bars
+
+- Entry multiplier: $k_{enter} = 10$
+
+- Exit multiplier: $k_{exit} = 5$
+
+- Transaction cost: 12 USD per trade (given)
+
+- Point value: 50 USD per index point (given)
+
+
+## Strategy Performance Overview (In-Sample vs Out-of-Sample)
+
+The performance of the S&P 500 equity index futures trend-following strategy exhibits a clear distinction between in-sample and out-of-sample periods, highlighting the importance of regime dependency and robustness considerations.
+
+The out-of-sample evaluation consists of five quarters: 2023 Q2, 2024 Q1, 2024 Q3, 2025 Q3, and 2025 Q4. These periods were not used during strategy design or parameter selection and were evaluated using a fixed parameter set.
+
+During the in-sample period, the strategy delivers strong risk-adjusted performance, characterized by consistently positive gross and net Sharpe ratios, as well as a steadily increasing cumulative P&L. Trend persistence during this period allows the EMA(20)–EMA(240) signal to capture directional moves efficiently, while volatility-scaled entry and exit thresholds help filter out minor price fluctuations and reduce unnecessary trades.
+
+While the strategy demonstrates strong in-sample performance, the inclusion of out-of-sample data leads to a pronounced deterioration in aggregate performance metrics. In particular, the overall summary statistic declines from approximately 1.95 in the in-sample period to -1.27 once all out-of-sample quarters are incorporated.
+
+This performance degradation suggests that the trend-following signal, calibrated on in-sample data, is less effective under out-of-sample market conditions. Several out-of-sample quarters are characterized by weaker trend persistence, higher noise, and more frequent regime shifts, resulting in an increased number of false entries and elevated drawdowns after transaction costs.
+
+## Cumulative Gross and Net P&L Analysis
+
+::: {.columns}
+::: {.column width="70%"}
+![](pnl-new.png){width="100%"}
+:::
+:::
+
+::: {.columns}
+::: {.column width="70%"}
+![](summary_statistics_table.png){width="100%"}
+:::
+:::
+Several key observations emerge:
+
+- The gap between gross and net P&L widens during periods of increased trading activity, underscoring the non-negligible impact of transaction costs.
+
+- Net P&L drawdowns are particularly pronounced during sideways or choppy market regimes, where the trend signal frequently oscillates around the entry and exit thresholds.
+
+- Although the strategy is capable of generating strong gains during sustained directional moves, these gains are often partially offset by losses incurred during subsequent regime shifts.
+
+The cumulative P&L profile suggests that while the strategy is effective in capturing medium-term trends, it remains vulnerable to prolonged non-trending environments.
+
+## Sharpe and Calmar Ratios
+
+Sharpe Ratio
+
+- Sharpe ratios are strongly regime-dependent, ranging from above 2.4 in trending quarters (e.g. 2023 Q1–Q2) to below −1.0 in adverse regimes (e.g. 2023 Q3, 2025 Q3–Q4).
+- The consistent gap between gross SR and net SR (≈0.2–0.4 points) confirms that transaction costs materially reduce, but do not fully eliminate, risk-adjusted performance in profitable regimes.
+
+Calmar Ratio
+
+- Calmar ratios exhibit larger dispersion than Sharpe, reaching above 7 in strong trend environments while deteriorating to below −3 in drawdown-heavy quarters, highlighting sensitivity to peak-to-trough losses.
+
+- Quarters with modest Sharpe ratios but negative Calmar values indicate that drawdowns, rather than volatility, dominate downside risk during regime transitions.
+
+Taken together, the Sharpe and Calmar dynamics indicate that drawdown control, rather than volatility reduction alone, is the primary limitation of the strategy in adverse regimes.
+
+## Quarterly Performance Decomposition
+
+To better understand the temporal structure of returns, strategy performance is analyzed at a quarterly frequency.
+
+### Profitable Trend Regimes
+
+Quarters such as 2023 Q1, 2023 Q2-Q4, 2024 Q1-Q2, and 2025 Q2 display strong positive cumulative P&L and high Sharpe ratios. In these periods, price dynamics are characterized by relatively smooth and persistent trends, allowing the EMA-based signal to remain aligned with the dominant market direction for extended periods.
+
+In these quarters:
+
+- Positions are held for longer durations,
+
+- Average daily trade counts remain moderate,
+
+- Transaction cost drag is limited relative to gross returns.
+
+This behavior is consistent with the intended design of the strategy.
+
+::::: columns
+::: {.column width="50%"}
+![](equity_2023_Q1.png){width="50%"} ![](equity_2023_Q2.png){width="50%"}
+:::
+
+::: {.column width="50%"}
+![](equity_2023_Q4.png){width="50%"} ![](equity_2024_Q1.png){width="50%"}
+:::
+:::::
+
+::: {.column width="50%"}
+![](equity_2024_Q2.png){width="50%"} ![](equity_2025_Q2.png){width="50%"}
+:::
+
+
+### Adverse and Noisy Regimes
+
+In contrast, quarters such as 2023 Q3, 2024 Q3–Q4, 2025 Q1, and 2025 Q3-Q4 exhibit negative performance, with sharp drawdowns in both gross and net P&L.
+
+The quarterly equity curves reveal:
+
+- Frequent position reversals,
+
+- Rapid erosion of accumulated gains,
+
+- Amplified net losses due to repeated transaction costs.
+
+Notably, the sharp drawdown observed in 2025 Q1 marks the beginning of sustained underperformance in the out-of-sample period. This quarter coincides with increased volatility clustering and reduced trend persistence, conditions under which EMA crossover strategies are known to struggle.
+
+::::: columns
+::: {.column width="50%"}
+![](equity_2023_Q3.png){width="50%"} ![](equity_2024_Q3.png){width="50%"}
+:::
+
+::: {.column width="50%"}
+![](equity_2024_Q4.png){width="50%"} ![](equity_2025_Q1.png){width="50%"}
+:::
+:::::
+
+::: {.column width="50%"}
+![](equity_2025_Q3.png){width="50%"} ![](equity_2025_Q4.png){width="50%"}
+:::
