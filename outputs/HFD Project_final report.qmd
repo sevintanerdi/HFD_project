@@ -230,3 +230,220 @@ Notably, the sharp drawdown observed in 2025 Q1 marks the beginning of sustained
 ::: {.column width="50%"}
 ![](equity_2025_Q3.png){width="50%"} ![](equity_2025_Q4.png){width="50%"}
 :::
+
+# Group 2 (XAU Futures) | Strategy Description and Out-of-Sample Evaluation
+
+## Asset Description
+
+The selected asset for Group 2 is the XAU (gold) futures contract. Gold futures are highly liquid and actively traded across global trading sessions, making them suitable for systematic intraday trading strategies.
+
+Due to the presence of a daily trading break, Group 2 assets require explicit handling of non-trading periods, which is incorporated into the strategy design and evaluation.
+
+## Strategy Approach
+
+The final strategy follows a momentum-based trend-following approach applied to intraday XAU futures data. The objective is to capture short-term directional price movements while maintaining a simple and transparent rule-based structure.
+
+The strategy is designed to be active only when a clear price trend is detected and to remain flat during non-trading periods and market breaks. All strategy rules and parameters are fixed after in-sample selection and applied unchanged to out-of-sample data.
+
+```{python}
+#|echo: false
+#| output: false
+#| results: hide
+#| eval: false
+import runpy
+runpy.run_path("final_strategy_group2.py")
+```
+## Strategy Type and Core Elements
+
+The strategy is implemented as a simple exponential moving average (EMA) crossover model. Its main components are:
+
+1. **Trend Indicator**  
+   Two EMAs are used to identify the prevailing intraday trend direction.
+
+2. **Directional Signal**  
+   The relative position of the fast and slow EMA determines whether the strategy takes a long or short position.
+
+3. **Trading Restrictions**  
+   Positions are closed before the daily trading break, and no trades are opened immediately after the break.
+
+This design ensures that trading decisions are systematic, transparent, and consistent across all quarters.
+
+## Signal Construction
+
+Let $P_t$ denote the gold futures price at time $t$.
+
+Two exponential moving averages are computed:
+
+- A fast exponential moving average with a window length of 20 bars, denoted as $EMA_{fast}(t)$
+- A slow exponential moving average with a window length of 100 bars, denoted as $EMA_{slow}(t)$
+
+The trading signal is defined as:
+
+$$
+S_t =
+\begin{cases}
+1 & \text{if } EMA_{fast}(t-1) > EMA_{slow}(t-1) \\
+-1 & \text{otherwise}
+\end{cases}
+$$
+
+Positions are shifted by one bar to avoid look-ahead bias.
+
+The EMA(20,100) configuration balances responsiveness and stability.
+The fast EMA reacts rapidly to recent price changes, while the slow EMA provides a medium-term benchmark that filters out short-term noise.
+
+## Trading Constraints and Parameters
+
+The following parameters and constraints are applied consistently in all quarters:
+
+- Asset traded: XAU futures  
+- Data frequency: 5-minute intraday data  
+- PnL aggregation: intraday trades aggregated to daily PnL  
+- Fast EMA window: 20 bars  
+- Slow EMA window: 100 bars  
+- Point value: 100 USD per point  
+- Transaction cost: 15 USD per trade  
+
+For Group 2 assets, trading is restricted as follows:
+
+- All positions are closed 10 minutes before the daily break (at 16:50).  
+- No new trades are opened during the first 10 minutes after the break (until 18:10).
+
+## Strategy Performance Overview (In-Sample vs Out-of-Sample)
+
+The strategy is selected based on in-sample performance and evaluated on out-of-sample data without any modification to rules or parameters.
+
+During the in-sample period, the strategy achieves positive cumulative PnL in several quarters, supporting its selection. However, performance is uneven across time, indicating sensitivity to market conditions.
+
+When applied to out-of-sample data, performance deteriorates. Aggregated cumulative PnL becomes flatter and more volatile, and transaction costs significantly reduce net profitability. Several out-of-sample quarters exhibit negative risk-adjusted performance.
+
+## Aggregated Cumulative Gross and Net P&L
+
+::: {.columns}
+::: {.column width="70%"}
+![](aggregated_cumulative_pnl.png){width="100%"}
+
+<small>*Figure 1: Aggregated cumulative gross and net PnL in the in-sample period.*</small>
+:::
+:::
+
+::: {.columns}
+::: {.column width="70%"}
+![](aggregated_cumulative_pnl_outofsample.png){width="100%"}
+
+<small>*Figure 2: Aggregated cumulative gross and net PnL in the out-of-sample period.*</small>
+:::
+:::
+
+Several key observations emerge from the cumulative P&L analysis:
+
+- Gross P&L increases substantially during strong directional regimes, confirming the effectiveness of the EMA(20,100) trend-following signal.
+- The gap between gross and net P&L widens during periods of elevated trading activity, highlighting the material impact of transaction costs.
+- Net P&L experiences prolonged drawdowns during sideways or noisy market conditions, particularly in the out-of-sample period.
+
+Overall, while the strategy captures trends effectively, its net profitability is significantly reduced once realistic trading frictions are incorporated.
+
+## Sharpe and Calmar Ratios
+::: {.columns}
+::: {.column width="70%"}
+![](summary_stats_group2_outofsample.png){width="100%"}
+
+<small>*Table 1: Summary performance statistics for the Group 2 strategy in the out-of-sample period.*</small>
+:::
+:::
+
+The table reports the required performance measures, including gross and net Sharpe ratios, cumulative PnL, and the average daily number of trades.
+
+### Sharpe Ratio
+
+- Sharpe ratios vary substantially across quarters in the out-of-sample period.
+- Strong positive net Sharpe ratios are observed in 2025 Q4, indicating effective performance during favorable trend conditions.
+- Negative net Sharpe ratios are observed in 2023 Q2, 2024 Q1, and 2024 Q3, reflecting weak or unstable performance in adverse market regimes.
+- The persistent gap between gross and net Sharpe ratios confirms that transaction costs materially reduce risk-adjusted performance.
+
+#### Calmar Ratio
+
+- Calmar ratios exhibit large dispersion across quarters.
+- Very high positive net Calmar values are observed in 2025 Q4, indicating strong performance with limited drawdowns.
+- Negative Calmar ratios in 2023 Q2, 2024 Q1, and 2024 Q3 highlight the importance of drawdown risk during unfavorable market conditions.
+
+Taken together, these metrics indicate that drawdown control is a key limitation of the strategy outside favorable trend regimes.
+
+
+## Quarterly Performance Decomposition
+
+### Profitable Trend Regimes
+
+Quarters such as 2023 Q4, 2024 Q2, 2025 Q2 and 2025 Q4 exhibit strong cumulative net P&L,
+positive Sharpe ratios, and favorable Calmar ratios.
+In these periods, gold prices display relatively smooth and persistent directional movements,
+allowing the EMA(20,100) crossover signal to remain aligned with the dominant trend.
+
+During these regimes:
+
+- Positions are held for longer durations,
+- Average daily trading frequency remains moderate,
+- Transaction cost drag is limited relative to gross returns.
+
+::::: columns
+::: {.column width="50%"}
+![](XAU_EMA20_100_2023_Q4.png){width="50%"} ![](XAU_EMA20_100_2024_Q2.png){width="50%"}
+:::
+
+::: {.column width="50%"}
+![](XAU_EMA20_100_2025_Q2.png){width="50%"} ![](XAU_EMA20_100_2025_Q4_OOS.png){width="50%"}
+:::
+:::::
+
+### Adverse and Noisy Regimes
+
+In contrast, quarters such as 2023 Q2, 2024 Q1, 2024 Q3, and 2025 Q3 are characterized by weak or negative net performance.
+The corresponding equity curves reveal frequent signal reversals,
+rapid erosion of accumulated gains, and amplified losses after transaction costs.
+
+These periods coincide with reduced trend persistence and increased intraday noise,
+conditions under which simple EMA crossover strategies are known to struggle.
+
+::::: columns
+::: {.column width="50%"}
+![](XAU_EMA20_100_2023_Q2_OOS.png){width="50%"} ![](XAU_EMA20_100_2024_Q1_OOS.png){width="50%"}
+:::
+
+::: {.column width="50%"}
+![](XAU_EMA20_100_2024_Q3_OOS.png){width="50%"} ![](XAU_EMA20_100_2025_Q3_OOS.png){width="50%"}
+:::
+:::::
+
+## Discussion
+
+### Overall Findings
+
+#### Group 1 – S&P 500 Futures
+
+- The Group 1 strategy performs well during periods of strong and stable market trends.
+- Volatility-based filters help reduce unnecessary trades and limit the impact of transaction costs.
+- This makes the strategy more stable compared to a simple EMA crossover.
+- When market regimes change, performance deteriorates and drawdowns become more pronounced.
+- This shows that even well-designed trend strategies depend heavily on market conditions.
+
+#### Group 2 – Gold (XAU) Futures
+
+- The EMA(20,100) momentum strategy successfully captures large directional price movements in gold.
+- In-sample results confirm that gold futures can exhibit tradable trends.
+- Out-of-sample performance is weaker due to choppy price behavior and frequent signal reversals.
+- High trading frequency causes transaction costs to substantially reduce net profits.
+- The strategy performs best during macro-driven trending periods and poorly in range-bound markets.
+
+### Comparison Between Group 1 and Group 2
+
+- Group 1 benefits from volatility filtering, which improves robustness and reduces overtrading.
+- Group 2 uses a simpler structure and is therefore more sensitive to market noise and costs.
+- Equity index futures show more consistent trend behavior than gold futures.
+- In both cases, gross profitability alone is not sufficient for evaluating strategy performance.
+
+## Conclusion
+
+- Trend-following strategies are highly regime-dependent.
+- Transaction costs must always be included in performance evaluation.
+- Simple strategies are useful for understanding markets, but require additional filters to be viable in practice.
+- Out-of-sample testing is essential to assess real-world performance.
